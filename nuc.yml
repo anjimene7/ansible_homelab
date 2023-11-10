@@ -3,6 +3,19 @@
   become: true
   vars:
     username: anjimene
+    nas_mounts:
+      - src: "//192.168.1.126/Data_Storage/Data"
+        dst: /media/data_storage
+        fstype: cifs
+        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
+      - src: "//192.168.1.126/home"
+        dst: /media/anjimene
+        fstype: cifs
+        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
+      - src: "//192.168.1.126/volume1/apps"
+        dst: /media/apps
+        fstype: cifs
+        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
 
   tasks:
     # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
@@ -74,24 +87,29 @@
     - name: Create credential file (used for fstab entry)
       copy:
         content: |
-          username=USER
+          username="{{ username }}"
           password=PASSWORD
-        dest: /home/"{{ username }}"/.credential
+        dest: /root/.smbcredentials
         mode: 0600
       become: true
-      become_user: "{{ username }}"
 
-    - name: Create fstab entry for product image folder share
-      mount:
-        state: present
-        fstype: cifs
-        opts: "credentials=/home/{{ username }}/.credential,file_mode=0755,dir_mode=0755,user"
-        src="//network_path/folder"
-        path="/local_path/folder"
-      become: true
+    - name: create directory if they don't exist
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /media/data_storage
+        - /media/anjimene
+        - /media/apps
 
-    - name: Mount product image folder share
-      shell: |
-        mount "/local_path/folder"
+    - name: Add mount to /etc/fstab
+      lineinfile:
+        path: '/etc/fstab'
+        line: "{{ item.src }} {{ item.dst }} {{ item.fstype }} {{ item.opts }}"
+      loop: "{{ nas\_mounts }}"
+
+    - name: mount all
+      command: mount -a
+      args:
+        warn: no
       become: true
-      become_user: myusername
