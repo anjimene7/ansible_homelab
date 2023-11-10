@@ -19,11 +19,17 @@
 
   tasks:
     # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
-    - name: Update apt cache
-      apt: update_cache=yes cache_valid_time=3600
+    - name: Update and upgrade apt packages
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 3600
 
     - name: Upgrade all apt packages
-      apt: upgrade=dist
+      become: true
+      apt:
+        upgrade: dist
 
     - name: Install aptitude
       apt:
