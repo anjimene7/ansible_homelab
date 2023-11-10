@@ -1,22 +1,9 @@
 ---
-- name: Test
-  hosts: all
-  vars:
-    ansible_host_key_checking: false ##If you get an error about hosts not trusted
-  become: true
-
-  tasks:
-    - name: Update and upgrade apt packages
-      apt:
-        update_cache: yes
-        upgrade: yes
-
-
-
 - name: Setup new Ubuntu Home Server
   hosts: all
   become: true
   vars:
+    ansible_host_key_checking: false ##If you get an error about hosts not trusted
     username: anjimene
     nas_mounts:
       - src: "//192.168.1.126/Data_Storage/Data"
@@ -38,7 +25,6 @@
       apt:
         upgrade: yes
         update_cache: yes
-        cache_valid_time: 3600
 
     - name: Upgrade all apt packages
       become: true
