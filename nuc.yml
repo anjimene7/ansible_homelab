@@ -1,20 +1,16 @@
 ---
 - name: Test
   hosts: all
-  tasks:
-    - become: true
-      command: id -u
-      register: id_output
+  vars:
+    ansible_host_key_checking: false ##If you get an error about hosts not trusted
+  become: true
 
-    - assert:
-        that: id_output.stdout == '0'
-    # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
+  tasks:
     - name: Update and upgrade apt packages
-      become: yes
       apt:
-        upgrade: yes
         update_cache: yes
-        cache_valid_time: 3600
+        upgrade: yes
+
 
 
 - name: Setup new Ubuntu Home Server
