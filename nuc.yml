@@ -20,7 +20,11 @@
         opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
 
   tasks:
-    # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
+    - name: Add repo for mainline
+      apt_repository:
+        repo: 'ppa:cappelikan/ppa'
+        state: present
+
     - name: Update and upgrade apt packages
       apt:
         upgrade: yes
@@ -50,6 +54,7 @@
           - git
           - lm-sensors
           - cifs-utils
+          - mainline
         state: latest
         update_cache: true
 
