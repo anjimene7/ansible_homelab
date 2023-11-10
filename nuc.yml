@@ -2,6 +2,8 @@
 - name: Test
   hosts: all
   tasks:
+    - name: Wait for /var/lib/dpkg/lock-frontend to be released
+      shell: while lsof /var/lib/dpkg/lock-frontend ; do sleep 10; done;
     # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
     - name: Update and upgrade apt packages
       become: yes
