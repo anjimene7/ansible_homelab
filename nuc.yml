@@ -1,5 +1,18 @@
 ---
-- hosts: all
+- name: Test
+  hosts: all
+  become: true
+  tasks:
+    # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 3600
+
+
+- name: Setup new Ubuntu Home Server
+  hosts: all
   become: true
   vars:
     username: anjimene
