@@ -117,6 +117,7 @@
         - /media/data_storage
         - /media/anjimene
         - /media/apps
+        - "/home/{{ username }}/docker"
 
     - name: Just force systemd to reread configs
       ansible.builtin.systemd:
