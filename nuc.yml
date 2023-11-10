@@ -3,7 +3,6 @@
   hosts: all
   become: true
   vars:
-    #ansible_host_key_checking: false ##If you get an error about hosts not trusted
     username: anjimene
     nas_mounts:
       - src: "//192.168.1.126/Data_Storage/Data"
@@ -72,10 +71,6 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
-
-    - name: Install Docker Module for Python
-      pip:
-        name: docker
 
     - name: Create portainer_agent container
       docker_container:
