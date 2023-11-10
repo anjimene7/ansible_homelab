@@ -4,8 +4,8 @@
   tasks:
     # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
     - name: Update and upgrade apt packages
+      become: yes
       apt:
-        become: yes
         upgrade: yes
         update_cache: yes
         cache_valid_time: 3600
