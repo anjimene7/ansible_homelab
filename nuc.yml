@@ -96,7 +96,7 @@
     - name: Add user to "docker" group
       user:
         name: "{{ username }}"
-        group: "{{ docker_group }}"
+        groups: "{{ docker_group }}"
         append: yes
 
     - name: Create credential file (used for fstab entry)
