@@ -14,7 +14,7 @@
         dst: /media/anjimene
         fstype: cifs
         opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
-      - src: "//192.168.1.126/volume1/apps"
+      - src: "//192.168.1.126/apps"
         dst: /media/apps
         fstype: cifs
         opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
@@ -103,8 +103,8 @@
     - name: Create credential file (used for fstab entry)
       copy:
         content: |
-          username="{{ username }}"
-          password="{{ PWD_SMB_CREDENTIALS }}"
+          username={{ username }}
+          password={{ PWD_SMB_CREDENTIALS }}
         dest: /root/.smbcredentials
         mode: 0600
       become: true
@@ -118,7 +118,7 @@
         - /media/anjimene
         - /media/apps
 
-    - name: Just force systemd to reread configs (2.4 and above)
+    - name: Just force systemd to reread configs
       ansible.builtin.systemd:
         daemon_reload: true
 
