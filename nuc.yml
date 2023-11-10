@@ -1,11 +1,11 @@
 ---
 - name: Test
   hosts: all
-  become: true
   tasks:
     # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
     - name: Update and upgrade apt packages
       apt:
+        become: yes
         upgrade: yes
         update_cache: yes
         cache_valid_time: 3600
@@ -73,13 +73,6 @@
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
         state: present
-
-    - name: Update and upgrade apt packages
-      become: true
-      apt:
-        upgrade: yes
-        update_cache: yes
-        cache_valid_time: 3600
 
     - name: Update apt and install docker-ce
       apt:
