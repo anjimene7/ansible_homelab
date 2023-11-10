@@ -125,6 +125,4 @@
 
     - name: mount all
       command: mount -a
-      args:
-        warn: no
       become: true
