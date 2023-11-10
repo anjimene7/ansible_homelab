@@ -54,6 +54,7 @@
           - git
           - lm-sensors
           - cifs-utils
+          - pkexec
           - mainline
         state: latest
         update_cache: true
