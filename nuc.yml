@@ -89,7 +89,7 @@
       copy:
         content: |
           username="{{ username }}"
-          password=PASSWORD
+          password="{{ PWD_SMB_CREDENTIALS }}"
         dest: /root/.smbcredentials
         mode: 0600
       become: true
@@ -107,7 +107,7 @@
       lineinfile:
         path: '/etc/fstab'
         line: "{{ item.src }} {{ item.dst }} {{ item.fstype }} {{ item.opts }}"
-      loop: "{{ nas\_mounts }}"
+      loop: "{{ nas_mounts }}"
 
     - name: mount all
       command: mount -a
