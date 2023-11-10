@@ -49,6 +49,7 @@
           - python3-setuptools
           - git
           - lm-sensors
+          - cifs-utils
         state: latest
         update_cache: true
 
