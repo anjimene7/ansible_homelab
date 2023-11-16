@@ -56,6 +56,7 @@
           - cifs-utils
           - pkexec
           - mainline
+          - linux-crashdump
         state: latest
         update_cache: true
 
@@ -80,19 +81,6 @@
           - docker-ce-cli
           - containerd.io
 
-    - name: Create portainer_agent container
-      docker_container:
-        name: portainer_agent
-        image: portainer/agent:latest
-        state: started
-        recreate: yes
-        restart_policy: always
-        published_ports:
-          - "9001:9001"
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-          - /var/lib/docker/volumes:/var/lib/docker/volumes
-
     # sudo groupadd docker
     - name: Create "docker" group
       group:
@@ -105,6 +93,18 @@
         name: "{{ username }}"
         groups: "{{ docker_group }}"
         append: yes
+
+    - name: download portainer stack.yml
+      get_url:
+        url: https://downloads.portainer.io/ce2-19/portainer-agent-stack.yml
+        dest: /home/{{ username }}/portainer-agent-stack.yml
+
+    - name: Deploy stack from a compose file
+      docker_stack:
+        state: present
+        name: portainer
+        compose:
+          - /home/{{ username }}/portainer-agent-stack.yml
 
     - name: Create credential file (used for fstab entry)
       copy:
