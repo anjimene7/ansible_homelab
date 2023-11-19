@@ -5,19 +5,25 @@
   vars:
     username: anjimene
     docker_group: docker
+    uid_mount: 1001
+    gid_mount: 995
     nas_mounts:
       - src: "//192.168.1.126/Data_Storage/Data"
         dst: /media/data_storage
         fstype: cifs
-        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
+        opts: "nobrl,uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "//192.168.1.126/Data_Storage/Data/Reading"
+        dst: /media/reading
+        fstype: cifs
+        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
       - src: "//192.168.1.126/home"
         dst: /media/anjimene
         fstype: cifs
-        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
+        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
       - src: "//192.168.1.126/apps"
         dst: /media/apps
         fstype: cifs
-        opts: "gid=1000,vers=3.0,credentials=/root/.smbcredentials"
+        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
 
   tasks:
     - name: Add repo for mainline
@@ -125,6 +131,7 @@
         state: directory
       loop:
         - /media/data_storage
+        - /media/reading
         - /media/anjimene
         - /media/apps
         - "/home/{{ username }}/docker"
