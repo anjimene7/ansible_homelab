@@ -63,6 +63,7 @@
           - pkexec
           - mainline
           - linux-crashdump
+          - hugo
         state: latest
         update_cache: true
 
@@ -99,22 +100,6 @@
         name: "{{ username }}"
         groups: "{{ docker_group }}"
         append: yes
-
-    - name: download portainer stack.yml
-      get_url:
-        url: https://downloads.portainer.io/ce2-19/portainer-agent-stack.yml
-        dest: /home/{{ username }}/portainer-agent-stack.yml
-
-    - name: Init a new swarm with default parameters
-      community.docker.docker_swarm:
-        state: present
-
-    - name: Deploy stack from a compose file
-      docker_stack:
-        state: present
-        name: portainer
-        compose:
-          - /home/{{ username }}/portainer-agent-stack.yml
 
     - name: Create credential file (used for fstab entry)
       copy:
