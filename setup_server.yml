@@ -4,26 +4,43 @@
   become: true
   vars:
     username: anjimene
+    nas_host: 192.168.1.71
     docker_group: docker
     uid_mount: 1001
     gid_mount: 995
     nas_mounts:
-      - src: "//192.168.1.126/Data_Storage/Data"
+      - src: "//{{ nas_host }}/Data"
         dst: /media/data_storage
         fstype: cifs
-        opts: "nobrl,uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
-      - src: "//192.168.1.126/Data_Storage/Data/Reading"
+        opts: "uid=1002,gid=1002,rw,vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "//{{ nas_host }}/Data/Cloud/nextcloud"
+        dst: /media/cloud
+        fstype: cifs
+        opts: "rw,mfsymlinks,seal,uid=33,gid=0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "//{{ nas_host }}/Data/Cloud/syncthing"
+        dst: /media/syncthing
+        fstype: cifs
+        opts: "rw,mfsymlinks,seal,uid=33,gid=0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "//{{ nas_host }}/Data/Reading"
         dst: /media/reading
         fstype: cifs
-        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
-      - src: "//192.168.1.126/home"
+        opts: "nobrl,uid=1001,gid=995,rw,vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "//{{ nas_host }}/Data/Cloud/nextcloud/anjimene/files"
         dst: /media/anjimene
         fstype: cifs
-        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
-      - src: "//192.168.1.126/apps"
-        dst: /media/apps
-        fstype: cifs
-        opts: "uid={{ uid_mount }},gid={{ gid_mount }},vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+        opts: "uid=1000,gid=1000,vers=3.0,file_mode=0770,dir_mode=0770,credentials=/root/.smbcredentials"
+      - src: "UUID=8787724f-8f6d-4801-bf61-e4b916ed7a4b"
+        dst: /media/usb
+        fstype: auto
+        opts: "nosuid,nodev,nofail,x-gvfs-show 0 0"
+      - src: "/dev/disk/by-uuid/4EFF-A210"
+        dst: /media/usb
+        fstype: auto
+        opts: "nosuid,nodev,nofail,x-gvfs-show 0 0"
+      - src: "LABEL=KOBOeReader"
+        dst: /media/kobo
+        fstype: auto
+        opts: "uid=1001,gid=995,nosuid,nodev,nofail,x-gvfs-show 0 0"
 
   tasks:
     - name: Add repo for mainline
@@ -51,6 +68,10 @@
       apt:
         pkg:
           - apt-transport-https
+          - net-tools
+          - openssh-server
+          - speedtest-cli
+          - unzip
           - ca-certificates
           - curl
           - software-properties-common
@@ -115,10 +136,13 @@
         path: "{{ item }}"
         state: directory
       loop:
-        - /media/data_storage
-        - /media/reading
         - /media/anjimene
-        - /media/apps
+        - /media/cloud
+        - /media/data_storage
+        - /media/kobo
+        - /media/reading
+        - /media/syncthing
+        - /media/usb
         - "/home/{{ username }}/docker"
 
     - name: Just force systemd to reread configs
